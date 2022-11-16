@@ -9,7 +9,20 @@ yarn add use-redux-store-without-provider
 ```
 
 ```typescript
+import { configureStore, createListenerMiddleware } from "@reduxjs/toolkit";
+import { useCallback } from "react";
 import { useStore } from "use-sync-external-store/with-selector";
 
-const [selected, dispatch] = useStore(your_store, your_selector);
+const store = configureStore({
+  reducer: { /*...*/ },
+  // must add listner middleware in your store othwersise it won't work
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().prepend(createListenerMiddleware().middleware),
+});
+
+function YourComponent() {
+  const [selected, dispatch] = useStore(store, your_selector);
+
+  return ( /*...*/ );
+}
 ```
